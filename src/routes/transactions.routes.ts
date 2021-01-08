@@ -1,15 +1,24 @@
 import { Router } from 'express';
+import { getCustomRepository } from 'typeorm';
 
+import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateCategoryService from '../services/CreateCategory.service';
-// import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateTransactionService from '../services/CreateTransaction.service';
+import GetTransactions from '../services/GetTransactionsWithCategoriesData.service';
 // import DeleteTransactionService from '../services/DeleteTransaction.service';
 // import ImportTransactionsService from '../services/ImportTransactions.service';
 
 const transactionsRouter = Router();
 
 transactionsRouter.get('/', async (request, response) => {
-  // TODO
+  const transactionsRepository = getCustomRepository(TransactionsRepository);
+
+  const getTransactionsWithCategories = new GetTransactions();
+
+  const transactions = await getTransactionsWithCategories.execute();
+  const balance = await transactionsRepository.getBalance();
+
+  return response.json({ transactions, balance });
 });
 
 transactionsRouter.post('/', async (request, response) => {
@@ -37,12 +46,12 @@ transactionsRouter.post('/', async (request, response) => {
   return response.json(newTransactionFormatter);
 });
 
-transactionsRouter.delete('/:id', async (request, response) => {
-  // TODO
-});
+// transactionsRouter.delete('/:id', async (request, response) => {
+//   // TODO
+// });
 
-transactionsRouter.post('/import', async (request, response) => {
-  // TODO
-});
+// transactionsRouter.post('/import', async (request, response) => {
+//   // TODO
+// });
 
 export default transactionsRouter;

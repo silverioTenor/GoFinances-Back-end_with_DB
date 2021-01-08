@@ -24,17 +24,29 @@ class CreateTransactionService {
       throw new AppError('Invalid type');
     }
 
-    const transactionsOfOutcome = await transactionsRepository.find({
-      where: { type: 'outcome' },
-    });
+    async function getValueOfIncomeOrOutcome(subType: string): Promise<number> {
+      let sumAllTypes = 0;
 
-    const allOutcomes = transactionsOfOutcome.map(transaction => {
-      return transaction.value;
-    });
+      const transactionsOfType = await transactionsRepository.find({
+        where: { type: subType },
+      });
 
-    const sumAllOutcome = allOutcomes.reduce((x, v) => x + v, 0);
+      if (transactionsOfType.length > 0) {
+        const allTypes = transactionsOfType.map(transaction => {
+          return transaction.value;
+        });
 
-    if (type === 'outcome' && value > sumAllOutcome) {
+        sumAllTypes = allTypes.reduce((x, v) => x + v, 0);
+      }
+
+      return sumAllTypes;
+    }
+
+    const income = await getValueOfIncomeOrOutcome('income');
+    const outcome = await getValueOfIncomeOrOutcome('outcome');
+    const total = income - outcome;
+
+    if (type === 'outcome' && value > total) {
       throw new AppError('Limit exceeded!');
     }
 
