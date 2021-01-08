@@ -1,21 +1,26 @@
 import { getRepository } from 'typeorm';
-import AppError from '../errors/AppError';
 
 import Category from '../models/Category';
 
 class CreateCategoryService {
+  private category: Category;
+
   public async execute(title: string): Promise<Category> {
-    const categoryRepository = getRepository(Category);
+    const categoriesRepository = getRepository(Category);
 
-    const categoryTitleExists = await categoryRepository.findOne({ where: { title } });
+    const categoryTitleExists = await categoriesRepository.findOne({ where: { title } });
 
-    if (categoryTitleExists) throw new AppError('This title already exists');
+    if (!categoryTitleExists) {
+      this.category = categoriesRepository.create({ title });
 
-    const category = categoryRepository.create({ title });
+      await categoriesRepository.save(this.category);
 
-    await categoryRepository.save(category);
+      return this.category;
+    }
 
-    return category;
+    this.category = categoryTitleExists;
+
+    return this.category;
   }
 }
 

@@ -14,12 +14,16 @@ export default class CreateTransaction1610123515470 implements MigrationInterfac
             default: 'uuid_generate_v4()',
           },
           {
-            name: 'type',
+            name: 'title',
             type: 'varchar',
           },
           {
             name: 'value',
             type: 'integer',
+          },
+          {
+            name: 'type',
+            type: 'varchar',
           },
           {
             name: 'category_id',

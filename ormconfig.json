@@ -4,7 +4,7 @@
   "port": 5433,
   "username": "postgres",
   "password": "docker",
-  "database": "gofinance_db",
+  "database": "gostack_desafio06_tests",
   "entities": [
     "./src/models/*.ts"
   ],
