@@ -1,6 +1,7 @@
 import { EntityRepository, Repository } from 'typeorm';
 
 import Transaction from '../models/Transaction';
+import GetBalanceService from '../services/GetBalance.service';
 
 interface Balance {
   income: number;
@@ -10,39 +11,14 @@ interface Balance {
 
 @EntityRepository(Transaction)
 class TransactionsRepository extends Repository<Transaction> {
+  private balance: Balance;
+
   public async getBalance(): Promise<Balance> {
-    async function getValueOfIncomeOrOutcome(
-      entity: TransactionsRepository,
-      subType: string,
-    ): Promise<number> {
-      let sumAllTypes = 0;
+    const getBalanceService = new GetBalanceService();
 
-      const transactionsOfType = await entity.find({
-        where: { type: subType },
-      });
+    this.balance = await getBalanceService.execute();
 
-      if (transactionsOfType.length > 0) {
-        const allTypes = transactionsOfType.map(transaction => {
-          return transaction.value;
-        });
-
-        sumAllTypes = allTypes.reduce((x, v) => x + v, 0);
-      }
-
-      return sumAllTypes;
-    }
-
-    const income = await getValueOfIncomeOrOutcome(this, 'income');
-    const outcome = await getValueOfIncomeOrOutcome(this, 'outcome');
-    const total = income - outcome;
-
-    const balance: Balance = {
-      income,
-      outcome,
-      total,
-    };
-
-    return balance;
+    return this.balance;
   }
 }
 
