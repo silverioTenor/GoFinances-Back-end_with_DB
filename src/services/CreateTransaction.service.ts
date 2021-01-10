@@ -34,8 +34,8 @@ class CreateTransactionService {
 
     this.transaction = transactionsRepository.create({
       title,
-      value,
       type,
+      value,
       category_id: category.id,
     });
 

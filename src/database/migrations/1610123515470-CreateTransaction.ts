@@ -18,12 +18,12 @@ export default class CreateTransaction1610123515470 implements MigrationInterfac
             type: 'varchar',
           },
           {
-            name: 'value',
-            type: 'integer',
-          },
-          {
             name: 'type',
             type: 'varchar',
+          },
+          {
+            name: 'value',
+            type: 'integer',
           },
           {
             name: 'category_id',
